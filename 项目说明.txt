@@ -1,0 +1,248 @@
+说明：本文档为早期设计稿，部分规划模块尚未实现，实际功能以 README.md 为准。
+
+starmirage-crawler/
+├── src/                              ⭐源码根
+│   └── xiaobaisnack/
+│       └── crawler/                  ⭐根包（你的命名空间）
+│
+│           ├── app/                  # 启动层，系统入口，初始化配置、启动爬虫和UI
+│           │   └── MainApplication.java
+│
+│           ├── core/                 # 核心爬虫，负责抓取和解析网页
+│           │   ├── CrawlerEngine.java       # 爬虫调度核心，管理线程池和爬虫流程
+│           │   ├── CrawlWorker.java        # 爬虫工作线程，执行抓取任务
+│           │   ├── PageFetcher.java       # 页面抓取，HTTP请求与响应处理
+│           │   ├── PageParser.java        # 页面解析，提取标题、正文等
+│           │   └── LinkExtractor.java     # 提取页面中的URL链接
+│
+│           ├── scheduler/            # 调度系统，控制任务优先级和爬取深度
+│           │   ├── TaskScheduler.java       # 调度器主控
+│           │   ├── DepthController.java    # 控制爬取深度
+│           │   ├── PriorityManager.java    # 管理任务优先级
+│           │   └── TimeScheduler.java      # 按时间调度任务
+│
+│           ├── url/                  # URL模块，管理URL队列、去重、状态
+│           │   └── manager/
+│           │       ├── UrlRepository.java   # URL队列管理
+│           │       ├── UrlDeduplicator.java # URL去重
+│           │       ├── UrlNormalizer.java   # URL规范化
+│           │       └── UrlStateMachine.java # URL状态管理（已抓/待抓）
+│           │   └── filter/                     ⭐URL黑名单模块
+│           │       ├── UrlBlacklist.java      # 核心黑名单，存储禁止访问的URL/域名/正则
+│           │       ├── UrlFilter.java         # URL统一入口，所有URL都要经过过滤
+│           │       ├── DomainBlacklist.java   # 可选，按域名黑名单过滤
+│           │       └── PatternBlacklist.java  # 可选，正则匹配URL黑名单
+│
+│           ├── limiter/              # 限流模块，控制请求频率避免被封
+│           │   ├── RateLimiter.java         # 通用速率限制
+│           │   ├── TokenBucketLimiter.java  # 令牌桶算法实现限流
+│           │   └── DomainLimiter.java       # 按域名限流
+│
+│           ├── cleaner/              # 内容清洗模块，提取正文并清理无用信息
+│           │   ├── ContentCleaner.java     # 提取正文，去导航、广告等
+│           │   ├── RuleEngine.java         # 规则引擎，过滤低质量内容
+│           │   └── HtmlSanitizer.java      # 去掉HTML标签、脚本、样式等
+│
+│           ├── storage/              # 存储系统
+│           │   ├── entity/                    # 数据实体
+│           │   │   ├── UrlEntity.java         # URL信息实体
+│           │   │   └── PageEntity.java       # 页面内容实体
+│           │   ├── dao/                       # 数据访问层
+│           │   │   ├── UrlDao.java            # URL表操作
+│           │   │   └── PageDao.java           # 页面表操作
+│
+│           ├── search/                  ⭐搜索引擎模块
+│           │   ├── engine/
+│           │   │   ├── SearchEngine.java     # 搜索主控，整合索引与查询
+│           │   │   └── QueryProcessor.java   # 查询处理，分词、语义分析
+│           │   ├── index/                       # 索引相关
+│           │   │   ├── InvertedIndex.java      # 倒排索引核心
+│           │   │   ├── IndexBuilder.java       # 建索引工具
+│           │   │   └── DocumentStore.java      # 页面内容存储
+│           │   ├── analyzer/                     # 分词与关键词处理
+│           │   │   ├── Tokenizer.java
+│           │   │   ├── KeywordExtractor.java
+│           │   │   └── StopWords.java
+│           │   └── rank/                         # 搜索结果排序
+│           │       ├── Ranker.java
+│           │       └── TfIdfCalculator.java
+│
+│           ├── browser/                 ⭐模拟浏览器模块
+│           │   ├── BrowserEngine.java    # 浏览器核心模拟，处理JS动态渲染
+│           │   ├── PageRenderer.java     # 渲染页面，可用于截图或提取内容
+│           │   └── JsExecutor.java       # 执行页面JS逻辑
+│
+│           ├── config/               # 配置文件
+│           │   ├── SiteConfig.java        # 网站配置
+│           │   ├── CrawlConfig.java       # 爬虫配置（线程、深度、延迟）
+│           │   └── KeywordConfig.java     # 搜索关键词配置
+│
+│           ├── utils/                # 工具类
+│           │   ├── HashUtils.java
+│           │   ├── HttpUtils.java
+│           │   └── TimeUtils.java
+│
+│           ├── ui/                   # JavaFX界面
+│           │   ├── MainWindow.java
+│           │   ├── UIController.java
+│           │   ├── components/
+│           │   │   ├── SearchBar.java      # 搜索框组件
+│           │   │   ├── ResultList.java     # 搜索结果列表展示
+│           │   │   ├── ControlPanel.java
+│           │   │   ├── StatsPanel.java
+│           │   │   ├── UrlTableView.java
+│           │   │   └── ContentView.java    # 页面内容展示
+│           │   └── model/
+│           │       ├── UrlViewModel.java
+│           │       └── StatsViewModel.java
+│
+│           └── api/                  # 可选接口层
+│               ├── CrawlController.java      # 外部接口调用爬虫
+│               └── StatsController.java      # 外部接口获取统计信息
+│
+├── target/                          # 编译输出
+├── lib/                             # 第三方依赖
+├── logs/                            # 日志
+└── config/                          # 外部配置文件
+
+
+
+✅ 总结功能标注原则
+app：程序入口，初始化系统
+core：抓取网页 + 解析内容
+scheduler：任务调度，控制抓取顺序、深度、优先级
+url：URL管理 + 去重 + 黑名单 + 状态控制
+limiter：限流，避免被封
+cleaner：页面清洗、正文提取、规则过滤
+storage：存储 URL 与页面内容
+search：搜索引擎模块，索引 + 查询 + 排序
+browser：模拟浏览器渲染 JS 动态页面
+config：各类配置
+utils：工具方法
+ui：JavaFX界面展示搜索结果
+api：对外提供爬虫或统计接口
+
+
+🧭 总流程（全局）
+          用户输入关键词
+                 ↓
+         🔍 SearchEngine
+         ↓           ↓
+   本地索引命中   没命中
+         ↓           ↓
+     返回结果     触发爬虫
+         ↓           ↓
+        UI展示 ← 爬虫补数据
+🔁 三、爬虫流程（你已有部分升级版）
+种子URL
+   ↓
+UrlRepository（队列）
+   ↓
+CrawlerWorker（多线程）
+   ↓
+PageFetcher（下载页面）
+   ↓
+PageParser（解析）
+   ↓
+LinkExtractor（提取新URL）
+   ↓
+UrlRepository（继续入队）
+   ↓
+ContentCleaner（清洗）
+   ↓
+PageDao（存储）
+   ↓
+🔥 IndexBuilder（建立索引）
+
+👉 ⚠️ 重点来了：
+
+❗抓完必须进入搜索系统
+PageEntity → IndexBuilder → InvertedIndex
+🔍 四、搜索流程（核心）
+用户输入： "Java 爬虫"
+
+        ↓
+
+QueryProcessor（处理关键词）
+
+        ↓
+
+Tokenizer（分词）
+
+        ↓
+
+InvertedIndex（查倒排索引）
+
+        ↓
+
+Ranker（排序）
+
+        ↓
+
+SearchResult（结果封装）
+
+        ↓
+
+UI展示
+🧠 五、浏览器行为（你说的“像浏览器”）
+
+你要的是这个👇
+
+模式 1：本地搜索（像百度）
+输入关键词 → 查你自己的数据
+模式 2：实时搜索（像浏览器）
+输入关键词
+   ↓
+拼URL（百度 / Google）
+   ↓
+爬搜索结果页
+   ↓
+提取结果链接（title + url + snippet）
+   ↓
+🔥 写入本地数据库（URL + 元信息）
+   ↓
+去重判断（是否已存在）
+   ↓
+加入爬虫队列（可选）
+   ↓
+展示给用户
+
+👉 这就是“借别人的搜索”
+
+模式 3：混合模式（推荐）
+优先本地
+不够 → 实时爬
+🖥 六、UI交互流程（重点）
+SearchBar（输入框）
+      ↓
+UIController
+      ↓
+SearchEngine.search()
+      ↓
+返回 List<SearchResult>
+      ↓
+ResultList 展示
+      ↓
+点击 → ContentView 显示网页
+🔥 七、线程模型（高级关键）
+主线程（UI）
+   ↓
+
+线程池（CrawlerEngine）
+   ├── Worker 1
+   ├── Worker 2
+   ├── Worker 3
+
+索引线程（异步）
+   └── IndexBuilder
+
+
+智能扩散式并发爬虫系统（Java）
+
+实现基于线程池的高并发网页抓取系统
+构建URL管理模块，支持去重、状态机流转与持久化存储
+设计扩散式爬虫模型，实现子链接自动发现与递归抓取
+引入深度控制与优先级调度，提升抓取效率与资源利用率
+实现内容清洗模块，对网页广告与噪音进行过滤
+设计时间调度机制，实现页面智能刷新
+构建完整爬虫执行闭环，实现系统自增长能力
