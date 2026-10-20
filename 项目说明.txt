@@ -1,6 +1,6 @@
 说明：本文档为早期设计稿，部分规划模块尚未实现，实际功能以 README.md 为准。
 
-starmirage-crawler/
+xinghuan-snack/
 ├── src/                              ⭐源码根
 │   └── xiaobaisnack/
 │       └── crawler/                  ⭐根包（你的命名空间）

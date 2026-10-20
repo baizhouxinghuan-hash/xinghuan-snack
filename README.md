@@ -50,6 +50,13 @@
 
 ## 快速开始
 
+### 获取代码
+
+```bash
+git clone https://github.com/baizhouxinghuan-hash/xinghuan-snack.git
+cd xinghuan-snack
+```
+
 ### 环境要求
 
 - JDK 17 或更高（`java -version` 验证）

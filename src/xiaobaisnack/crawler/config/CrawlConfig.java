@@ -15,7 +15,7 @@ public class CrawlConfig {
     private int requestDelay = 1000;    // 请求间隔(ms)
     private int connectTimeout = 5000;  // 连接超时(ms)
     private int readTimeout = 5000;     // 读取超时(ms)
-    private String userAgent = "Mozilla/5.0 (compatible; BaiZhouXingHuan/1.0)";
+    private String userAgent = "Mozilla/5.0 (compatible; StarMirageCrawler/1.0)";
     private boolean respectRobotsTxt = true;  // 是否遵守robots.txt
     private boolean enableRateLimit = true;   // 是否启用限流
     private int rateLimitPerSecond = 5;       // 每秒最大请求数

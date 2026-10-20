@@ -13,7 +13,7 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * ⭐ 主窗口 - 白昼星环浏览器
+ * ⭐ 主窗口 - 星幻爬虫 StarMirage Crawler
  *
  * 功能：
  * - 爬虫管理主界面

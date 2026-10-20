@@ -31,6 +31,7 @@
 - `HttpUtils` User-Agent 改为 `StarMirageCrawler/1.0`；charset 不被 JVM 支持时回退 UTF-8。
 - 外部搜索抓取失败时不再用摘要冒充正文入库。
 - 界面标题、关于对话框、启动横幅、帮助文案统一为星幻爬虫。
+- `CrawlConfig` 默认 UA 与 `MainWindow` 注释中的旧名同步为 StarMirage Crawler；文档中的仓库地址改为实际仓库 `xinghuan-snack`。
 
 ### 移除
 
